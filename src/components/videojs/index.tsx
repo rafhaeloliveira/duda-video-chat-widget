@@ -1,16 +1,14 @@
-import React from 'react';
-import videojs, { VideoJsPlayerOptions } from 'video.js';
+import React, { LegacyRef } from 'react';
+import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 
 interface Props { 
-    options: {
-        autoplay: boolean
-        sources: VideoJsPlayerOptions
-    }
-    onReady: (arg: any) => void 
+    options: videojs.PlayerOptions
 }
 
-const initialOptions = {
+const initialOptions: videojs.PlayerOptions = {
+    autoplay: true,
+    muted: true,
     controls: true,
     fluid: true,
     controlBar: {
@@ -21,14 +19,15 @@ const initialOptions = {
 }
 
 const VideoJs = ({ options }: Props) => {
-    const videoRef = React.useRef<HTMLVideoElement | null>();
-    const playerRef = React.useRef<videojs.Player | null>();
+    const videoRef = React.useRef<HTMLVideoElement>();
+    const playerRef = React.useRef<videojs.Player>();
 
     React.useEffect(() => {
-        playerRef.current = videojs(videoRef.current, {
+        playerRef.current = videojs(videoRef.current as Element, {
             ...initialOptions,
             ...options
-        })
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        }).ready(() => {})
 
         return () => {
             if(playerRef.current) {
@@ -38,7 +37,7 @@ const VideoJs = ({ options }: Props) => {
     }, [options])
 
     return (
-        <video ref={videoRef} className="video-js" />
+        <video ref={videoRef as LegacyRef<HTMLVideoElement>} className="video-js vjs-big-play-centered vjs-fill" />
     )
 }
 
