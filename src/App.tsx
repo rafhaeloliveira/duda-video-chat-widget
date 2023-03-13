@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 import Grid from '@mui/material/Grid';
 import VideoJs from './components/videojs';
-import Chat from './components/chat';
+import Chat, { LoginProps } from './components/chat';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import Login from './components/Login';
 
 declare global {
   interface Window {
@@ -16,7 +17,7 @@ declare global {
   }
 }
 
-const dados = window.duda_data || {};
+// const dados = window.duda_data || {};
 
 const darkTheme = createTheme({
   palette: {
@@ -25,7 +26,12 @@ const darkTheme = createTheme({
 })
 
 const App = () => {
-  const { text1 } = dados?.config || {};
+  const [login, setLogin] = useState<LoginProps>({ username: '' });
+
+  const handleLogin = (username: string) => {
+    console.log("login =>", username)
+    setLogin({ username })
+  }
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -39,7 +45,10 @@ const App = () => {
           }} />
         </Grid>
         <Grid className='vjs_video_3-dimensions vjs-fluid' item md={4} sm={12} sx={{ position: 'relative' }}>
-          <Chat />
+          {Boolean(login.username) ?        
+            <Chat username={login.username} />
+            : <Login onLogin={handleLogin} />
+        }
         </Grid>
       </Grid>
     </ThemeProvider>
