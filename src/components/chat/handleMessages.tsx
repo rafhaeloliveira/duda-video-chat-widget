@@ -29,16 +29,32 @@ const HandleMessages = ({ chatRoom }: { chatRoom?: ChatRoom }) => {
         const unsubscribeOnConnected = chatRoom.addListener('connect', () => {
             // Connected to the chat room.
             renderConnect();
-          });
+        });
 
         const unsubscribeOnMessageReceived = chatRoom.addListener('message', (message) => {
             // const messageType = message.attributes?.message_type || 'MESSAGE';
             handleMessage(message);
-        })
+        });
+
+        const unsubscribeOnMessageDeleted = chatRoom.addListener(
+            'messageDelete',
+            (deleteEvent) => {
+              // Received message delete event
+              const messageIdToDelete = deleteEvent.messageId;
+              setMessages((prevState) => {
+                // Remove message that matches the MessageID to delete
+                const newState = prevState.filter(
+                  (item) => item.messageId !== messageIdToDelete
+                );
+                return newState;
+              });
+            }
+          );
 
         return () => {
             unsubscribeOnConnected();
             unsubscribeOnMessageReceived();
+            unsubscribeOnMessageDeleted();
         }
     }, [chatRoom])
 
@@ -51,7 +67,7 @@ const HandleMessages = ({ chatRoom }: { chatRoom?: ChatRoom }) => {
 
     const renderSuccessMessage = (successMessage: Message) => {
         return (
-            <Typography variant="body1" component="p" key={`${successMessage.timestamp}`}>{successMessage.message}</Typography>
+            <Typography sx={{ padding: '10px', fontSize: '12px', color: '#098d00' }} variant="body1" component="p" key={`${successMessage.timestamp}`}>{successMessage.message}</Typography>
         );
     };
 
@@ -84,7 +100,7 @@ const HandleMessages = ({ chatRoom }: { chatRoom?: ChatRoom }) => {
             timestamp: new Date(),
             username: '',
             avatar: '',
-            message: `Connected to the chat room.`,
+            message: `Conectado`,
             userId: '',
             messageId: '',
             sender: {

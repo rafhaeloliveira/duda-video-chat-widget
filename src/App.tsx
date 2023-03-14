@@ -4,7 +4,7 @@ import './App.css';
 import Grid from '@mui/material/Grid';
 import VideoJs from './components/videojs';
 import Chat, { LoginProps } from './components/chat';
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 import Login from './components/Login';
 
 declare global {
@@ -29,28 +29,28 @@ const App = () => {
   const [login, setLogin] = useState<LoginProps>({ username: '' });
 
   const handleLogin = (username: string) => {
-    console.log("login =>", username)
     setLogin({ username })
   }
 
+  const videoElement = document.getElementById("vjs_video_3");
+
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Grid container>
-        <Grid item md={8} sm={12}>
-          <VideoJs options={{
-            sources: [{
-              src: 'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8',
-            }]          
-          }} />
+        <Grid container sx={{ backgroundColor: "#181818", overflow: "hidden" }}>
+          <Grid item md={8} sm={12} xs={12}>
+            <VideoJs options={{
+              sources: [{
+                src: 'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8',
+              }]      
+            }} />
+          </Grid>
+          <Grid item md={4} sm={12} xs={12} sx={{ maxHeight: videoElement?.clientHeight }}>
+            {Boolean(login.username) ?        
+              <Chat username={login.username} />
+              : <Login onLogin={handleLogin} />
+            }
+          </Grid>
         </Grid>
-        <Grid className='vjs_video_3-dimensions vjs-fluid' item md={4} sm={12} sx={{ position: 'relative' }}>
-          {Boolean(login.username) ?        
-            <Chat username={login.username} />
-            : <Login onLogin={handleLogin} />
-        }
-        </Grid>
-      </Grid>
     </ThemeProvider>
 )}
 

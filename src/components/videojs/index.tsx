@@ -27,7 +27,9 @@ const VideoJs = ({ options }: Props) => {
             ...initialOptions,
             ...options
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        }).ready(() => {})
+        }).ready(() => {
+            const videoElement = document.getElementById("vjs_video_3");
+        })
 
         return () => {
             if(playerRef.current) {

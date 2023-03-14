@@ -6,6 +6,6 @@ export const MessageContainer = styled(Grid)(({ theme }) => ({
     overflow: 'auto',
 
     [theme.breakpoints.down('md')]: {
-        // minHeight: '300px'
+        minHeight: '300px'
     }
 }))

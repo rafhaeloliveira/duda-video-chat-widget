@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from '@mui/material';
 import { default as LogoutIcon } from '@mui/icons-material/Logout';
 import { default as SendIcon } from '@mui/icons-material/Send';
@@ -16,6 +16,8 @@ export interface LoginProps {
 const Chat = ({ username }: LoginProps) => {
     const [chatRoom, setChatRoom] = useState<ChatRoom>();
     const [message, setMessage] = useState('');
+
+    const messagesEndRef = createRef<HTMLDivElement>();
 
     useEffect(() => {
         const room = new ChatRoom({
@@ -58,8 +60,15 @@ const Chat = ({ username }: LoginProps) => {
         console.log("chatRoom ==>", chatRoom)
     }, [chatRoom])
 
+    useEffect(() => {
+        const scrollToBottom = () => {
+          messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
+        };
+        scrollToBottom();
+      });
+
     return (
-        <Grid container direction="column" wrap="nowrap" sx={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%' }}>
+        <Grid container direction="column" wrap="nowrap" sx={{ height: '100%' }}>
             <Grid item md={1} xs={1}>
                 <Paper elevation={2} sx={{ borderRadius: 0, padding: '10px' }}>
                     <Grid container alignItems="center"justifyContent="space-between" >
@@ -73,11 +82,12 @@ const Chat = ({ username }: LoginProps) => {
                 </Paper>
             </Grid>
 
-            <Grid item md={11} xs={11} p={1} sx={{ maxHeight: '58%' }}>
+            <Grid item md={11} xs={11} p={1} sx={{ height: '92%' }}>
                 <Paper elevation={2} sx={{ height: '100%' }}>
                     <Grid container direction="column" wrap='nowrap' sx={{ height: '100%' }}>
                         <MessageContainer item xs={10} sx={{ height: '100%' }}>
                             {HandleMessages({ chatRoom })}
+                            <div ref={messagesEndRef} />
                         </MessageContainer>
                         <Grid item xs={2} p={1}>
                             <FormControl variant='outlined' fullWidth onSubmit={sendMessage}>
