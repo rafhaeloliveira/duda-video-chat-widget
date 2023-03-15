@@ -20,8 +20,8 @@ const Login = ({ onLogin }: Props) => {
     return (
         <Grid container direction="column" wrap="nowrap">
             <Grid item xs={12} p={2}>
-                <Paper elevation={2} sx={{ height: '61%', padding: '20px' }}>
-                    <Grid container direction="column" justifyContent="center" spacing={2} sx={{ height: '100%' }}>
+                <Paper elevation={2} sx={{ padding: '20px' }}>
+                    <Grid container direction="column" justifyContent="center" wrap="nowrap" spacing={2} sx={{ height: '100%' }}>
                         <Grid item>
                             <Typography variant="body1" component="p" align='center'>Chat</Typography>
                         </Grid>

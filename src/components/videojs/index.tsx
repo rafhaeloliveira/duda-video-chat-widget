@@ -9,7 +9,7 @@ interface Props {
 const initialOptions: videojs.PlayerOptions = {
     autoplay: true,
     muted: true,
-    controls: true,
+    controls: true,    
     fluid: true,
     controlBar: {
         volumePanel: {
@@ -39,7 +39,11 @@ const VideoJs = ({ options }: Props) => {
     }, [options])
 
     return (
-        <video ref={videoRef as LegacyRef<HTMLVideoElement>} className="video-js vjs-big-play-centered vjs-fill" />
+        <video 
+            ref={videoRef as LegacyRef<HTMLVideoElement>}
+            style={{ maxHeight: '700px' }}
+            className="video-js vjs-big-play-centered vjs-16-9 vjs-fill"
+        />
     )
 }
 

@@ -1,6 +1,6 @@
+import React, { useEffect } from 'react';
 import { Typography } from '@mui/material';
 import { ChatMessage, ChatRoom } from 'amazon-ivs-chat-messaging';
-import React, { useEffect } from 'react';
 import Menssagem from '../Mensagem';
 
 export interface Message {
@@ -51,17 +51,35 @@ const HandleMessages = ({ chatRoom }: { chatRoom?: ChatRoom }) => {
             }
           );
 
+          const unsubscribeOnUserDisconnect = chatRoom.addListener(
+            'userDisconnect',
+            (disconnectUserEvent) => {
+              /* Example event payload:
+               * {
+               *   id: "AYk6xKitV4On",
+               *   userId": "R1BLTDN84zEO",
+               *   reason": "Spam",
+               *   sendTime": new Date("2022-10-11T12:56:41.113Z"),
+               *   requestId": "b379050a-2324-497b-9604-575cb5a9c5cd",
+               *   attributes": { UserId: "R1BLTDN84zEO", Reason: "Spam" }
+               * }
+               */
+              renderDisconnect(`${disconnectUserEvent.reason}`);
+            }
+          );
+
         return () => {
             unsubscribeOnConnected();
             unsubscribeOnMessageReceived();
             unsubscribeOnMessageDeleted();
+            unsubscribeOnUserDisconnect();
         }
     }, [chatRoom])
 
     // Renderers
     const renderErrorMessage = (errorMessage: Message) => {
         return (
-            <Typography variant="body1" component="p" key={`${errorMessage.timestamp}`}>{errorMessage.message}</Typography>
+            <Typography sx={{ padding: '10px', fontSize: '12px', color: '#c72727' }} variant="body1" component="p" key={`${errorMessage.timestamp}`}>{errorMessage.message}</Typography>
         );
     };
 
@@ -111,6 +129,26 @@ const HandleMessages = ({ chatRoom }: { chatRoom?: ChatRoom }) => {
             return [status];
         });
     };
+
+    const renderDisconnect = (reason: string) => {
+        const reasonText = reason === 'Kicked by moderator' ? ': Banido pelo moderador' : '';
+
+        const error = {
+            type: 'ERROR',
+            timestamp: new Date(),
+            username: '',
+            userId: '',
+            avatar: '',
+            message: `Desconectado ${reasonText}`,
+            messageId: '',
+            sender: {
+                userId: ''
+            }
+        };
+        setMessages((prevState) => {
+          return [...prevState, error];
+        });
+      };
     
     const renderMessages = () => {
         return messages?.map((message: Message) => {

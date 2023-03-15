@@ -11,9 +11,10 @@ import HandleMessages from './handleMessages';
 
 export interface LoginProps {
     username: string
+    onLogout?: () => void
 }
 
-const Chat = ({ username }: LoginProps) => {
+const Chat = ({ username, onLogout }: LoginProps) => {
     const [chatRoom, setChatRoom] = useState<ChatRoom>();
     const [message, setMessage] = useState('');
 
@@ -57,15 +58,21 @@ const Chat = ({ username }: LoginProps) => {
     }
 
     useEffect(() => {
-        console.log("chatRoom ==>", chatRoom)
-    }, [chatRoom])
-
-    useEffect(() => {
         const scrollToBottom = () => {
-          messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
+          messagesEndRef?.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "start"
+          });
         };
         scrollToBottom();
       });
+
+    const callLogout = () => {
+        chatRoom?.disconnect()
+
+        onLogout?.()
+    }
 
     return (
         <Grid container direction="column" wrap="nowrap" sx={{ height: '100%' }}>
@@ -76,7 +83,13 @@ const Chat = ({ username }: LoginProps) => {
                             <Typography variant='body1'>Chat</Typography>
                         </Grid>
                         <Grid item>
-                            <Button variant='outlined' sx={{ marginLeft: 'auto'}} endIcon={<LogoutIcon />}>Sair</Button>
+                            <Button
+                                disabled={chatRoom?.state !== 'connected'}
+                                variant='outlined'
+                                sx={{ marginLeft: 'auto'}}
+                                endIcon={<LogoutIcon />}
+                                onClick={callLogout}
+                            >Sair</Button>
                         </Grid>
                     </Grid>
                 </Paper>
